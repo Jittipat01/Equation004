@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบการลบจำนวนเต็ม</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .quiz-content {
+            padding: 40px;
+        }
+
+        /* หน้าเริ่มต้น */
+        .start-screen {
+            text-align: center;
+            display: block;
+        }
+
+        .start-screen.hidden {
+            display: none;
+        }
+
+        .quiz-info {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 6px solid #667eea;
+        }
+
+        .quiz-info h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .info-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .info-list li {
+            margin: 10px 0;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .timer {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .question-text {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 6px solid #667eea;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3em;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.2);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .feedback.correct {
+            border: 4px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            border: 4px solid #dc3545;
+        }
+
+        .feedback h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .feedback.correct h3 {
+            color: #28a745;
+        }
+
+        .feedback.incorrect h3 {
+            color: #dc3545;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .results {
+            text-align: center;
+            display: none;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pass {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .fail {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        }
+
+        .solutions {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .solution-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .solution-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .solution-step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+
+        .flowers {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 30px;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-content {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.3em;
+                padding: 20px;
+            }
+            
+            .option {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .question-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <h1>แบบทดสอบการลบจำนวนเต็ม</h1>
+            <p>ชั้นมัธยมศึกษาปีที่ 1</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">โดยคุณครูจิราภรณ์ คำแสนราช</p>
+        </div>
+
+        <div class="quiz-content">
+            <!-- หน้าเริ่มต้น -->
+            <div class="start-screen" id="start-screen">
+                <div class="quiz-info">
+                    <h3>📋 รายละเอียดแบบทดสอบ</h3>
+                    <ul class="info-list">
+                        <li>🎯 <strong>จำนวนข้อสอบ:</strong> 5 ข้อ</li>
+                        <li>⏰ <strong>เวลาต่อข้อ:]</strong> 60 วินาที</li>
+                        <li>📊 <strong>เกณฑ์ผ่าน:</strong> 60% ขึ้นไป</li>
+                        <li>📝 <strong>เนื้อหา:</strong> การลบจำนวนเต็ม</li>
+                        <li>💡 <strong>คำแนะนำ:</strong> อ่านโจทย์ให้ดีและใช้เวลาให้เหมาะสม</li>
+                    </ul>
+                </div>
+
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                    <h4 style="color: #1976d2; margin-bottom: 15px;">🔔 ข้อควรทราบ</h4>
+                    <p style="color: #555; line-height: 1.6;">
+                        • คลิกเลือกคำตอบที่ถูกต้องแล้วกดปุ่ม "ส่งคำตอบ"<br>
+                        • หากหมดเวลาจะส่งคำตอบอัตโนมัติ<br>
+                        • สามารถกลับไปแก้คำตอบข้อก่อนหน้าได้<br>
+                        • เมื่อทำเสร็จจะมีเฉลยและคะแนนแสดงผล
+                    </p>
+                </div>
+
+                <button class="start-btn" onclick="startQuiz()">
+                    🚀 เริ่มทำแบบทดสอบ
+                </button>
+            </div>
+
+            <!-- ส่วนแบบทดสอบ -->
+            <div class="quiz-section" id="quiz-section">
+                <!-- คำถามที่ 1 -->
+                <div class="question-container active" data-question="0">
+                    <div class="question-header">
+                        <div class="question-number">ข้อที่ 1</div>
+                        <div class="timer" id="timer-0">⏰ 60 วินาที</div>
+                    </div>
+                    <div class="question-text">5 - 8 = ?</div>
+                    <div class="options">
+                        <div class="option" data-answer="a">A) 3</div>
+                        <div class="option" data-answer="b">B) -3</div>
+                        <div class="option" data-answer="c">C) 13</div>
+                        <div class="option" data-answer="d">D) -13</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn btn-primary" onclick="submitAnswer(0)">ส่งคำตอบ</button>
+                    </div>
+                </div>
+
+                <!-- คำถามที่ 2 -->
+                <div class="question-container" data-question="1">
+                    <div class="question-header">
+                        <div class="question-number">ข้อที่ 2</div>
+                        <div class="timer" id="timer-1">⏰ 60 วินาที</div>
+                    </div>
+                    <div class="question-text">(-7) - (-4) = ?</div>
+                    <div class="options">
+                        <div class="option" data-answer="a">A) -11</div>
+                        <div class="option" data-answer="b">B) -3</div>
+                        <div class="option" data-answer="c">C) 3</div>
+                        <div class="option" data-answer="d">D) 11</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn btn-secondary" onclick="previousQuestion()">ก่อนหน้า</button>
+                        <button class="btn btn-primary" onclick="submitAnswer(1)">ส่งคำตอบ</button>
+                    </div>
+                </div>
+
+                <!-- คำถามที่ 3 -->
+                <div class="question-container" data-question="2">
+                    <div class="question-header">
+                        <div class="question-number">ข้อที่ 3</div>
+                        <div class="timer" id="timer-2">⏰ 60 วินาที</div>
+                    </div>
+                    <div class="question-text">12 - (-15) = ?</div>
+                    <div class="options">
+                        <div class="option" data-answer="a">A) -27</div>
+                        <div class="option" data-answer="b">B) -3</div>
+                        <div class="option" data-answer="c">C) 3</div>
+                        <div class="option" data-answer="d">D) 27</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn btn-secondary" onclick="previousQuestion()">ก่อนหน้า</button>
+                        <button class="btn btn-primary" onclick="submitAnswer(2)">ส่งคำตอบ</button>
+                    </div>
+                </div>
+
+                <!-- คำถามที่ 4 -->
+                <div class="question-container" data-question="3">
+                    <div class="question-header">
+                        <div class="question-number">ข้อที่ 4</div>
+                        <div class="timer" id="timer-3">⏰ 60 วินาที</div>
+                    </div>
+                    <div class="question-text">(-9) - 6 = ?</div>
+                    <div class="options">
+                        <div class="option" data-answer="a">A) -15</div>
+                        <div class="option" data-answer="b">B) -3</div>
+                        <div class="option" data-answer="c">C) 3</div>
+                        <div class="option" data-answer="d">D) 15</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn btn-secondary" onclick="previousQuestion()">ก่อนหน้า</button>
+                        <button class="btn btn-primary" onclick="submitAnswer(3)">ส่งคำตอบ</button>
+                    </div>
+                </div>
+
+                <!-- คำถามที่ 5 -->
+                <div class="question-container" data-question="4">
+                    <div class="question-header">
+                        <div class="question-number">ข้อที่ 5</div>
+                        <div class="timer" id="timer-4">⏰ 60 วินาที</div>
+                    </div>
+                    <div class="question-text">0 - (-20) = ?</div>
+                    <div class="options">
+                        <div class="option" data-answer="a">A) -20</div>
+                        <div class="option" data-answer="b">B) 0</div>
+                        <div class="option" data-answer="c">C) 20</div>
+                        <div class="option" data-answer="d">D) ไม่สามารถหาคำตอบได้</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn btn-secondary" onclick="previousQuestion()">ก่อนหน้า</button>
+                        <button class="btn btn-primary" onclick="submitAnswer(4)">ส่งคำตอบ</button>
+                    </div>
+                </div>
+
+                <!-- ผลลัพธ์ -->
+                <div class="results">
+                    <h2>ผลลัพธ์การทดสอบ</h2>
+                    <div class="score-display" id="score-display"></div>
+                    <div id="pass-status"></div>
+                    
+                    <div class="solutions">
+                        <h3>เฉลยและวิธีทำ</h3>
+                        <div class="solution-item">
+                            <h4>ข้อที่ 1: 5 - 8 = ?</h4>
+                            <div class="solution-step">วิธีทำ: 5 - 8 = 5 + (-8) = -3</div>
+                            <div class="solution-step">คำตอบที่ถูก: B) -3</div>
+                            <div class="solution-step">หลักการ: เมื่อลบจำนวนที่มากกว่า จะได้ผลลัพธ์เป็นลบ</div>
+                        </div>
+                        
+                        <div class="solution-item">
+                            <h4>ข้อที่ 2: (-7) - (-4) = ?</h4>
+                            <div class="solution-step">วิธีทำ: (-7) - (-4) = (-7) + 4 = -3</div>
+                            <div class="solution-step">คำตอบที่ถูก: B) -3</div>
+                            <div class="solution-step">หลักการ: การลบจำนวนลบ เท่ากับการบวกจำนวนบวก</div>
+                        </div>
+                        
+                        <div class="solution-item">
+                            <h4>ข้อที่ 3: 12 - (-15) = ?</h4>
+                            <div class="solution-step">วิธีทำ: 12 - (-15) = 12 + 15 = 27</div>
+                            <div class="solution-step">คำตอบที่ถูก: D) 27</div>
+                            <div class="solution-step">หลักการ: การลบจำนวนลบ เท่ากับการบวกจำนวนบวก</div>
+                        </div>
+                        
+                        <div class="solution-item">
+                            <h4>ข้อที่ 4: (-9) - 6 = ?</h4>
+                            <div class="solution-step">วิธีทำ: (-9) - 6 = (-9) + (-6) = -15</div>
+                            <div class="solution-step">คำตอบที่ถูก: A) -15</div>
+                            <div class="solution-step">หลักการ: การลบจำนวนบวก เท่ากับการบวกจำนวนลบ</div>
+                        </div>
+                        
+                        <div class="solution-item">
+                            <h4>ข้อที่ 5: 0 - (-20) = ?</h4>
+                            <div class="solution-step">วิธีทำ: 0 - (-20) = 0 + 20 = 20</div>
+                            <div class="solution-step">คำตอบที่ถูก: C) 20</div>
+                            <div class="solution-step">หลักการ: การลบจำนวนลบจากศูนย์ จะได้จำนวนบวก</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="restartQuiz()">ทำแบบทดสอบใหม่</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="feedback" id="feedback">
+        <h3 id="feedback-title"></h3>
+        <p id="feedback-message"></p>
+        <button class="btn btn-primary" onclick="nextQuestion()" style="margin-top: 20px;">ถัดไป</button>
+    </div>
+
+    <div class="flowers" id="flowers"></div>
+
+    <script>
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let correctAnswers = ['b', 'b', 'd', 'a', 'c'];
+        let timers = [];
+        let timeLeft = [60, 60, 60, 60, 60];
+        let quizStarted = false;
+
+        // เริ่มแบบทดสอบ
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-section').classList.add('active');
+            quizStarted = true;
+            startTimer(0);
+        }
+
+        // เริ่มจับเวลา
+        function startTimer(questionIndex) {
+            const timerElement = document.getElementById(`timer-${questionIndex}`);
+            
+            timers[questionIndex] = setInterval(() => {
+                timeLeft[questionIndex]--;
+                timerElement.textContent = `⏰ ${timeLeft[questionIndex]} วินาที`;
+                
+                if (timeLeft[questionIndex] <= 10) {
+                    timerElement.style.background = '#dc3545';
+                    timerElement.style.animation = 'pulse 1s infinite';
+                }
+                
+                if (timeLeft[questionIndex] <= 0) {
+                    clearInterval(timers[questionIndex]);
+                    submitAnswer(questionIndex, true); // ส่งคำตอบอัตโนมัติเมื่อหมดเวลา
+                }
+            }, 1000);
+        }
+
+        // เลือกคำตอบ
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('option') && quizStarted) {
+                const questionContainer = e.target.closest('.question-container');
+                const options = questionContainer.querySelectorAll('.option');
+                
+                options.forEach(opt => opt.classList.remove('selected'));
+                e.target.classList.add('selected');
+            }
+        });
+
+        // ส่งคำตอบ
+        function submitAnswer(questionIndex, timeout = false) {
+            const questionContainer = document.querySelector(`[data-question="${questionIndex}"]`);
+            const selectedOption = questionContainer.querySelector('.option.selected');
+            
+            let userAnswer = null;
+            if (selectedOption) {
+                userAnswer = selectedOption.getAttribute('data-answer');
+            }
+            
+            userAnswers[questionIndex] = userAnswer;
+            
+            // หยุดจับเวลา
+            if (timers[questionIndex]) {
+                clearInterval(timers[questionIndex]);
+            }
+            
+            // แสดงผลตอบ
+            const isCorrect = userAnswer === correctAnswers[questionIndex];
+            showFeedback(isCorrect, timeout);
+        }
+
+        // แสดงข้อความตอบกลับ
+        function showFeedback(isCorrect, timeout = false) {
+            const overlay = document.getElementById('overlay');
+            const feedback = document.getElementById('feedback');
+            const title = document.getElementById('feedback-title');
+            const message = document.getElementById('feedback-message');
+            
+            overlay.style.display = 'block';
+            feedback.style.display = 'block';
+            
+            if (timeout) {
+                feedback.className = 'feedback incorrect';
+                title.textContent = 'หมดเวลา!';
+                message.textContent = 'เวลาหมดแล้วค่ะ ต้องพยายามให้มากกว่านี้';
+            } else if (isCorrect) {
+                feedback.className = 'feedback correct';
+                title.textContent = 'ถูกต้องค่ะ!';
+                message.textContent = 'คุณเก่งมากเลย!';
+                createFlowers();
+            } else {
+                feedback.className = 'feedback incorrect';
+                title.textContent = 'ผิดค่ะ';
+                message.textContent = 'ต้องพยายามให้มากกว่านี้';
+            }
+        }
+
+        // สร้างดอกไม้โปรย
+        function createFlowers() {
+            const flowersContainer = document.getElementById('flowers');
+            const flowerSymbols = ['🌸', '🌺', '🌻', '🌷', '🌹', '💐', '🏵️'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const flower = document.createElement('div');
+                    flower.className = 'flower';
+                    flower.textContent = flowerSymbols[Math.floor(Math.random() * flowerSymbols.length)];
+                    flower.style.left = Math.random() * 100 + '%';
+                    flower.style.animationDelay = Math.random() * 2 + 's';
+                    flower.style.animationDuration = (3 + Math.random() * 2) + 's';
+                    
+                    flowersContainer.appendChild(flower);
+                    
+                    setTimeout(() => {
+                        flower.remove();
+                    }, 5000);
+                }, i * 100);
+            }
+        }
+
+        // ไปคำถามถัดไป
+        function nextQuestion() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            
+            if (currentQuestion < 4) {
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                startTimer(currentQuestion);
+            } else {
+                showResults();
+            }
+        }
+
+        // กลับคำถามก่อนหน้า
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                // หยุดจับเวลาของคำถามปัจจุบัน
+                if (timers[currentQuestion]) {
+                    clearInterval(timers[currentQuestion]);
+                }
+                
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                
+                // เริ่มจับเวลาใหม่ถ้ายังมีเวลาเหลือ
+                if (timeLeft[currentQuestion] > 0) {
+                    startTimer(currentQuestion);
+                }
+            }
+        }
+
+        // แสดงผลลัพธ์
+        function showResults() {
+            document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.results').style.display = 'block';
+            
+            let score = 0;
+            for (let i = 0; i < correctAnswers.length; i++) {
+                if (userAnswers[i] === correctAnswers[i]) {
+                    score++;
+                }
+            }
+            
+            const percentage = (score / correctAnswers.length) * 100;
+            const passed = percentage >= 60;
+            
+            const scoreDisplay = document.getElementById('score-display');
+            const passStatus = document.getElementById('pass-status');
+            
+            scoreDisplay.textContent = `${score}/${correctAnswers.length} (${percentage.toFixed(0)}%)`;
+            scoreDisplay.className = `score-display ${passed ? 'pass' : 'fail'}`;
+            
+            if (passed) {
+                passStatus.innerHTML = '<h3 style="color: #28a745;">🎉 ยินดีด้วย! คุณสอบผ่าน</h3>';
+                createFlowers();
+            } else {
+                passStatus.innerHTML = '<h3 style="color: #dc3545;">📚 ยังไม่ผ่าน กรุณาทบทวนและลองใหม่</h3>';
+            }
+        }
+
+        // เริ่มแบบทดสอบใหม่
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            timeLeft = [60, 60, 60, 60, 60];
+            quizStarted = false;
+            
+            // ล้างตัวจับเวลาทั้งหมด
+            timers.forEach(timer => {
+                if (timer) clearInterval(timer);
+            });
+            timers = [];
+            
+            // รีเซ็ตการแสดงผล
+            document.querySelector('.results').style.display = 'none';
+            document.getElementById('quiz-section').classList.remove('active');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.querySelector('[data-question="0"]').classList.add('active');
+            
+            // รีเซ็ตตัวเลือกทั้งหมด
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // รีเซ็ตตัวจับเวลา
+            document.querySelectorAll('[id^="timer-"]').forEach((timer, index) => {
+                timer.textContent = '⏰ 60 วินาที';
+                timer.style.background = '#ff6b6b';
+                timer.style.animation = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
